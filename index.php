@@ -279,24 +279,36 @@ include 'koneksi.php';
     <section id="gallery" class="text-center p-5" style="background-color: #dfecc8;">
       <div class="container">
         <h1 class="fw-bold display-4 pb-3">Gallery</h1>
+        <?php
+        $sql = "SELECT * FROM gallery ORDER BY tanggal DESC";
+        $hasil = $conn->query($sql);
+        $gallery = [];
+        if ($hasil) {
+          while ($row = $hasil->fetch_assoc()) {
+            $gallery[] = $row;
+          }
+        }
+
+        if (count($gallery) > 0) {
+        ?>
         <div id="carouselExample" class="carousel slide">
-          <div class="carousel-inner">
-            <div class="carousel-item active">
-              <img src="img/gambar1.jpg" class="d-block w-100 gallery-img" alt="gambar1"/>
-            </div>
-            <div class="carousel-item">
-              <img src="img/gambar2.jpg" class="d-block w-100 gallery-img" alt="gambar2"/>
-            </div>
-            <div class="carousel-item">
-              <img src="img/gambar3.jpg" class="d-block w-100 gallery-img" alt="gambar3"/>
-            </div>
-            <div class="carousel-item">
-              <img src="img/gambar4.jpg" class="d-block w-100 gallery-img" alt="gambar4"/>
-            </div>
-            <div class="carousel-item">
-              <img src="img/gambar5.jpg" class="d-block w-100 gallery-img" alt="gambar5"/>
-            </div>
+          <?php if (count($gallery) > 1) { ?>
+          <div class="carousel-indicators">
+            <?php foreach ($gallery as $i => $g) { ?>
+              <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="<?= $i ?>" class="<?= $i === 0 ? 'active' : '' ?>" aria-current="<?= $i === 0 ? 'true' : 'false' ?>" aria-label="Slide <?= $i+1 ?>"></button>
+            <?php } ?>
           </div>
+          <?php } ?>
+
+          <div class="carousel-inner">
+            <?php foreach ($gallery as $i => $g) { ?>
+            <div class="carousel-item <?= $i === 0 ? 'active' : '' ?>">
+              <img src="img/<?= htmlspecialchars($g['gambar']) ?>" class="d-block w-100 gallery-img" alt="<?= htmlspecialchars($g['deskripsi']) ?>"/>
+            </div>
+            <?php } ?>
+          </div>
+
+          <?php if (count($gallery) > 1) { ?>
           <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Previous</span>
@@ -305,7 +317,13 @@ include 'koneksi.php';
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Next</span>
           </button>
+          <?php } ?>
         </div>
+        <?php
+        } else {
+          echo '<p class="text-muted">Belum ada gambar gallery.</p>';
+        }
+        ?>
       </div>
     </section>
     <!-- gallery end -->
